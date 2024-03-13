@@ -23,7 +23,6 @@ export class CreateWishDTO {
 
   @IsArray()
   @IsString({ each: true })
-  @ArrayMinSize(1)
   urlLinks?: string[];
 
   @IsNotEmpty()
