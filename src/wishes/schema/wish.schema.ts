@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import * as mongoosePaginate from 'mongoose-paginate-v2';
 
-export type WishDocument = HydratedDocument<Wish>;
+export type WishDocument = Wish & Document;
 
 @Schema()
 export class Wish {
@@ -27,4 +27,5 @@ export class Wish {
   categories: string[];
 }
 
-export const WishSchema = SchemaFactory.createForClass(Wish);
+export const WishSchema =
+  SchemaFactory.createForClass(Wish).plugin(mongoosePaginate);
