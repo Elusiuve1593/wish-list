@@ -1,11 +1,14 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { CreateWishDTO } from './dto/create-wish.dto';
 import { WishesService } from './wishes.service';
@@ -21,8 +24,11 @@ export class WishesController {
   }
 
   @Get()
-  getWishes(): Promise<Wish[]> {
-    return this.wishesService.getWishes();
+  getWishes(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+  ): Promise<{ content: Wish[]; totalPages: number; totalElements: number }> {
+    return this.wishesService.getWishes(page, limit);
   }
 
   @Get(':id')
