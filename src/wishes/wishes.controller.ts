@@ -48,4 +48,25 @@ export class WishesController {
   deleteWish(@Param('id') id: string) {
     return this.wishesService.deleteWish(id);
   }
+
+  @Post(':id/categories/:category')
+  createCategoryForWish(
+    @Param('id') id: string,
+    @Param('category') category: string,
+  ): Promise<void> {
+    return this.wishesService.createCategoryForWish(id, category);
+  }
+  
+  @Get('categories/:id')
+  getCategory(@Param('id') id: string): Promise<string[]> {
+    return this.wishesService.getCategory(id);
+  }
+
+  @Delete(':id/categories/:category')
+  deleteCategoryFromWish(
+    @Param('id') id: string,
+    @Param('category') category: string,
+  ): Promise<void> {
+    return this.wishesService.deleteCategoryFromWish(id, category);
+  }
 }

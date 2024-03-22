@@ -40,15 +40,40 @@ export class WishesService {
     };
   }
 
-  async deleteWish(id: string): Promise<Wish> {
-    return await this.wishModel.findByIdAndDelete(id);
+  async getWish(id: string): Promise<Wish> {
+    return await this.wishModel.findById(id);
   }
 
   async updateWish(id: string, updateWish: UpdateWishDTO): Promise<Wish> {
     return await this.wishModel.findByIdAndUpdate(id, updateWish);
   }
 
-  async getWish(id: string): Promise<Wish> {
-    return await this.wishModel.findById(id);
+  async deleteWish(id: string): Promise<Wish> {
+    return await this.wishModel.findByIdAndDelete(id);
+  }
+
+  async getCategory(id: string): Promise<string[]> {
+    const wish = await this.wishModel.findById(id);
+    return wish.categories;
+  }
+
+  async createCategoryForWish(id: string, category: string): Promise<void> {
+    await this.wishModel.updateOne(
+      { _id: id },
+      {
+        $push: {
+          categories: category,
+        },
+      },
+    );
+  }
+
+  async deleteCategoryFromWish(id: string, category: string): Promise<void> {
+    const wish = await this.wishModel.findById(id);
+    const index = wish.categories.indexOf(category);
+    if (index !== -1) {
+      wish.categories.splice(index, 1);
+      await wish.save();
+    }
   }
 }
