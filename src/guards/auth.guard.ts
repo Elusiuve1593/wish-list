@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { jwtConstants } from '../auth/jwt/secret';
+import { jwtConfig } from 'src/auth/jwt/jwt.config';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -20,8 +20,9 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
     try {
+      const options = await jwtConfig.useFactory();
       const payload = await this.jwtService.verifyAsync(token, {
-        secret: jwtConstants.secret,
+        secret: options.secret,
       });
 
       request['user'] = payload;

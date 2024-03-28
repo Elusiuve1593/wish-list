@@ -15,6 +15,7 @@ import { join } from 'path';
       }),
       inject: [ConfigService],
     }),
+    
   ],
   exports: [MongooseModule, ConfigModule],
 })
