@@ -11,10 +11,10 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { CreateWishDTO } from './dto/create-wish.dto';
-import { WishesService } from './wishes.service';
-import { Wish } from './schema/wish.schema';
-import { UpdateWishDTO } from './dto/update-wish.dto';
+import { CreateWishDTO } from '../dto/create-wish.dto';
+import { WishesService } from '../services/wishes.service';
+import { Wish } from '../schema/wish.schema';
+import { UpdateWishDTO } from '../dto/update-wish.dto';
 import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('wishes')
