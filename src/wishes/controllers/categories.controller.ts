@@ -13,7 +13,6 @@ import { CategoriesService } from '../services/categories.service';
 @Controller('wishes')
 export class CategoriesController {
   constructor(
-    private readonly wishesService: WishesService,
     private readonly categoriesService: CategoriesService,
   ) {}
 
