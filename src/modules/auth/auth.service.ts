@@ -6,7 +6,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { BcryptService } from 'src/bcrypt/bcrypt.service';
+import { BcryptService } from 'src/common/bcrypt/bcrypt.service';
 import { AuthenticationDTO } from './dto/authentication.dto';
 import { RegistrationDTO } from './dto/registration.dto';
 import { Auth } from './schema/auth.schema';
@@ -63,7 +63,7 @@ export class AuthService {
   async refresh({ refresh_token }: TokensDTO): Promise<TokensDTO> {
     try {
       const decodeRefreshToken: { sub: string } =
-        this.jwtService.verify(refresh_token);
+        await this.jwtService.verifyAsync(refresh_token);
 
       const user = await this.authModel.findById(decodeRefreshToken.sub);
       if (!user) {
