@@ -25,10 +25,12 @@ export class AuthService {
     const hashedPassword = await this.bcrypt.hashPassword(
       registration.password,
     );
-    return await this.authModel.create({
+    const newUser = await this.authModel.create({
       ...registration,
       password: hashedPassword,
     });
+
+    return await this.authModel.findById(newUser._id).select('-password');
   }
 
   async existMail(email: string): Promise<RegistrationDTO | null> {
