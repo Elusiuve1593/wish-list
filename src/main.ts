@@ -9,6 +9,7 @@ import { AuthGuard } from './guards/auth.guard';
 async function bootstrap() {
   dotenv.config();
   const app = await NestFactory.create(AppModule);
+  app.enableCors()
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(3000);
 }
