@@ -4,10 +4,10 @@ export type AuthDocument = Auth & Document;
 
 @Schema()
 export class Auth {
-  @Prop({ unique: true, required: true })
+  @Prop({ unique: true, required: true, })
   email: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, select: false })
   password: string;
 }
 

@@ -1,34 +1,36 @@
 import {
   Controller,
   Delete,
+  Get,
+  Headers,
   Param,
   Post,
-  Get,
   UseGuards,
 } from '@nestjs/common';
-import { WishesService } from '../services/wishes.service';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { AuthGuard } from 'src/common/guards/auth.guard';
 import { CategoriesService } from '../services/categories.service';
 
-@Controller('wishes')
+@Controller()
 export class CategoriesController {
-  constructor(
-    private readonly categoriesService: CategoriesService,
-  ) {}
+  constructor(private readonly categoriesService: CategoriesService) {}
 
   @UseGuards(AuthGuard)
   @Post(':id/categories/:category')
   createCategoryForWish(
     @Param('id') id: string,
     @Param('category') category: string,
+    @Headers('Authorization') token: string,
   ): Promise<void> {
-    return this.categoriesService.createCategoryForWish(id, category);
+    return this.categoriesService.createCategoryForWish(id, category, token);
   }
 
   @UseGuards(AuthGuard)
   @Get('categories/:id')
-  getCategory(@Param('id') id: string): Promise<string[]> {
-    return this.categoriesService.getCategory(id);
+  getCategory(
+    @Param('id') id: string,
+    @Headers('Authorization') token: string,
+  ): Promise<string[]> {
+    return this.categoriesService.getCategory(id, token);
   }
 
   @UseGuards(AuthGuard)
@@ -36,7 +38,8 @@ export class CategoriesController {
   deleteCategoryFromWish(
     @Param('id') id: string,
     @Param('category') category: string,
+    @Headers('Authorization') token: string,
   ): Promise<void> {
-    return this.categoriesService.deleteCategoryFromWish(id, category);
+    return this.categoriesService.deleteCategoryFromWish(id, category, token);
   }
 }

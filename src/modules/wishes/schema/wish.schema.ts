@@ -3,7 +3,7 @@ import * as mongoosePaginate from 'mongoose-paginate-v2';
 
 export type WishDocument = Wish & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Wish {
   @Prop({ required: true })
   title: string;
@@ -25,6 +25,9 @@ export class Wish {
     required: true,
   })
   categories: string[];
+
+  @Prop({ type: String, required: false, select: false })
+  owner: string;
 }
 
 export const WishSchema =
