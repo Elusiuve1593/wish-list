@@ -3,45 +3,48 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Auth_orm } from '../entities/entity/auth.entity';
 import { BcryptService } from 'src/common/bcrypt/bcrypt.service';
-import { AuthenticationDTO } from './dto/authentication.dto';
-import { RegistrationDTO } from './dto/registration.dto';
-import { Auth } from './schema/auth.schema';
-import { TokensDTO } from './dto/tokens.dto';
+import { RegistrationDTO } from '../dto/registration.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { plainToClass } from 'class-transformer';
+import { AuthenticationDTO } from '../dto/authentication.dto';
+import { TokensDTO } from '../dto/tokens.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
-export class AuthService {
+export class AuthSqlService {
   constructor(
-    @InjectModel(Auth.name)
-    private readonly authModel: Model<Auth>,
+    @InjectRepository(Auth_orm)
+    private readonly authRepository: Repository<Auth_orm>,
     private readonly bcrypt: BcryptService,
     private readonly jwtService: JwtService,
   ) {}
 
-  async userRegistration(registration: RegistrationDTO): Promise<Auth> {
+  async userRegistration(registration: RegistrationDTO): Promise<Auth_orm> {
     const hashedPassword = await this.bcrypt.hashPassword(
       registration.password,
     );
-    const newUser = await this.authModel.create({
+
+    const userRegistration = new Auth_orm({
       ...registration,
       password: hashedPassword,
     });
+    const savedUser = await this.authRepository.save(userRegistration);
 
-    return await this.authModel.findById(newUser._id).select('-password');
+    return plainToClass(Auth_orm, savedUser);
   }
 
-  async existMail(email: string): Promise<RegistrationDTO | null> {
-    return this.authModel.findOne({ email });
+  existMail(email: string): Promise<Auth_orm | null> {
+    return this.authRepository.findOne({ where: { email } });
   }
 
   async authentication({
     email,
     password,
   }: AuthenticationDTO): Promise<TokensDTO | null> {
-    const user = await this.authModel.findOne({ email });
+    const user = await this.authRepository.findOne({ where: { email } });
     if (!user) throw new NotFoundException(`User with ${email} is not found`);
 
     const comparePassword = await this.bcrypt.comparePassword(
@@ -50,7 +53,7 @@ export class AuthService {
     );
     if (!comparePassword) throw new UnauthorizedException('Incorrect password');
 
-    const payload = { sub: user._id, userName: user.email };
+    const payload = { sub: user.id, userName: user.email };
 
     return {
       access_token: await this.jwtService.signAsync(payload, {
@@ -67,12 +70,14 @@ export class AuthService {
       const decodeRefreshToken: { sub: string } =
         await this.jwtService.verifyAsync(refresh_token);
 
-      const user = await this.authModel.findById(decodeRefreshToken.sub);
+      const user = await this.authRepository.findOne({
+        where: { id: +decodeRefreshToken.sub },
+      });
       if (!user) {
         throw new NotFoundException('User not found');
       }
 
-      const payload = { sub: user._id, userName: user.email };
+      const payload = { sub: user.id, userName: user.email };
       return {
         access_token: await this.jwtService.signAsync(payload, {
           expiresIn: '1h',
@@ -81,7 +86,7 @@ export class AuthService {
           expiresIn: '5d',
         }),
       };
-    } catch (error) {
+    } catch {
       throw new UnauthorizedException('Invalid refresh token');
     }
   }

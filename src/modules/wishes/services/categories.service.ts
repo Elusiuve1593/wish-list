@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Wish, WishDocument } from '../schema/wish.schema';
+import { Wish, WishDocument } from '../entities/schema/wish.schema';
 import { PaginateModel } from 'mongoose';
 import { TokenService } from 'src/common/token/token.service';
 

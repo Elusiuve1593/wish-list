@@ -5,11 +5,11 @@ import {
   HttpStatus,
   Post
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { AuthenticationDTO } from './dto/authentication.dto';
-import { RegistrationDTO } from './dto/registration.dto';
-import { TokensDTO } from './dto/tokens.dto';
-import { Auth } from './schema/auth.schema';
+import { AuthService } from '../services/auth.service';
+import { AuthenticationDTO } from '../dto/authentication.dto';
+import { RegistrationDTO } from '../dto/registration.dto';
+import { TokensDTO } from '../dto/tokens.dto';
+import { Auth } from '../entities/schema/auth.schema';
 
 @Controller('auth')
 export class AuthController {
@@ -17,7 +17,7 @@ export class AuthController {
 
   @Post('registration')
   async userRegistration(@Body() registration: RegistrationDTO): Promise<Auth> {
-    const existMail: RegistrationDTO | null = await this.authService.existMail(
+    const existMail: Auth | null = await this.authService.existMail(
       registration.email,
     );
 
