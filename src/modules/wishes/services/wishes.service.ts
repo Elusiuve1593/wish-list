@@ -4,7 +4,7 @@ import { PaginateModel } from 'mongoose';
 import { TokenService } from 'src/common/token/token.service';
 import { CreateWishDTO } from '../dto/create-wish.dto';
 import { UpdateWishDTO } from '../dto/update-wish.dto';
-import { Wish, WishDocument } from '../schema/wish.schema';
+import { Wish, WishDocument } from '../entities/schema/wish.schema';
 
 @Injectable()
 export class WishesService {
@@ -17,7 +17,7 @@ export class WishesService {
   async createWish(createWish: CreateWishDTO, token: string): Promise<Wish> {
     const decodedToken: { sub: string } =
       await this.tokenService.decoder(token);
-    
+
     const wish = await new this.wishModel({
       ...createWish,
       owner: decodedToken.sub,
@@ -45,6 +45,7 @@ export class WishesService {
         limit,
       },
     );
+
     return {
       docs,
       totalPages,

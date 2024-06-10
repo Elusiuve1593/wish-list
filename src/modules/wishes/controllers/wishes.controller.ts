@@ -10,12 +10,12 @@ import {
   Post,
   Put,
   Query,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { CreateWishDTO } from '../dto/create-wish.dto';
 import { UpdateWishDTO } from '../dto/update-wish.dto';
-import { Wish } from '../schema/wish.schema';
+import { Wish } from '../entities/schema/wish.schema';
 import { WishesService } from '../services/wishes.service';
 
 @Controller('wishes')
@@ -37,7 +37,12 @@ export class WishesController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
     @Headers('Authorization') token: string,
-  ): Promise<{ docs: Wish[]; totalPages: number; totalDocs: number }> {
+  ): Promise<{
+    docs: Wish[];
+    totalPages: number;
+    totalDocs: number;
+  }> {
+    limit = limit > 100 ? 100 : limit;
     return this.wishesService.getWishes(page, limit, token);
   }
 

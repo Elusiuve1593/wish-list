@@ -1,9 +1,15 @@
 import { Module } from '@nestjs/common';
-import { ConfigureModule } from './config/config.module';
-import { WishesModule } from './modules/wishes/wishes.module';
+import { DatabaseConfigureModule } from './config/database_config.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
+import { WishesModule } from './modules/wishes/wishes.module';
 
 @Module({
-  imports: [ConfigureModule, WishesModule, AuthModule],
+  imports: [
+    DatabaseConfigureModule,
+    WishesModule,
+    AuthModule,
+    CloudinaryModule,
+  ]
 })
 export class AppModule {}

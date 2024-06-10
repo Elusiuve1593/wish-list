@@ -34,4 +34,7 @@ export class CreateWishDTO {
   @IsString({ each: true })
   @ArrayMinSize(1)
   categories: string[];
+
+  @IsString()
+  image?: string;
 }

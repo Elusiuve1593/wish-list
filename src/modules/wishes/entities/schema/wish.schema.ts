@@ -26,6 +26,9 @@ export class Wish {
   })
   categories: string[];
 
+  @Prop({ required: true })
+  image: string;
+
   @Prop({ type: String, required: false, select: false })
   owner: string;
 }
